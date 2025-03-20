@@ -2,8 +2,11 @@ name: Daily Codeforces Problem Commit
 
 on:
   schedule:
-    - cron: '45 4 * * *'  # Runs at 10:15 AM IST (4:45 AM UTC)
+    - cron: '15 5 * * *'  # Runs at 10:45 AM IST
   workflow_dispatch:
+
+permissions:
+  contents: write  # Ensure push access
 
 jobs:
   update-repo:
@@ -13,6 +16,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Install jq
+        run: sudo apt-get install jq -y
+
       - name: Fetch Codeforces Problem and Generate Solution
         run: |
           mkdir -p solutions
@@ -20,28 +26,21 @@ jobs:
           file="solutions/solution_$day.py"
           mdfile="problems.md"
 
-          # Fetch Codeforces problem list
           response=$(curl -s "https://codeforces.com/api/problemset.problems")
-          
-          # Extract total number of problems
           total=$(echo $response | jq '.result.problems | length')
 
-          # Pick a random problem
           index=$((RANDOM % total))
           problem=$(echo $response | jq ".result.problems[$index]")
 
-          # Extract problem details
           name=$(echo $problem | jq -r '.name')
           contestId=$(echo $problem | jq -r '.contestId')
           index=$(echo $problem | jq -r '.index')
           url="https://codeforces.com/contest/$contestId/problem/$index"
 
-          # Append problem to markdown file
           echo "## Problem for $day" >> $mdfile
           echo "**[$name]($url)**" >> $mdfile
           echo "" >> $mdfile
 
-          # Generate a Python solution template
           echo "# Solution for $day ($name)" > $file
           echo "def solve():" >> $file
           echo "    # TODO: Implement solution" >> $file
@@ -50,9 +49,13 @@ jobs:
           echo "if __name__ == '__main__':" >> $file
           echo "    solve()" >> $file
 
-          # Git commit and push
-          git config --global user.name "$(git config user.name)"
-          git config --global user.email "$(git config user.email)"
-          git add $file $mdfile
-          git commit -m "Added Codeforces problem & solution for $day"
-          git push
+      - name: Configure Git
+        run: |
+          git config --global user.name "Mrigesh Deshpande"
+          git config --global user.email "mrigeshdeshpande246+code@gmail.com"
+
+      - name: Commit and Push Changes
+        run: |
+          git add solutions/solution_$day.py problems.md
+          git commit -m "Added Codeforces problem & solution for $day" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/MrigeshDeshpande/daily-coding-problems.git HEAD:main
