@@ -2,7 +2,8 @@ name: Daily Codeforces Problem Commit
 
 on:
   schedule:
-    - cron: '15 5 * * *'  # Runs at 10:45 AM IST
+     - cron: '15 5 * * *'   # Runs at 10:45 AM IST (5:15 UTC)
+     - cron: '30 10 * * *'  # Runs at 4:00 PM IST (10:30 UTC)
   workflow_dispatch:
 
 permissions:
@@ -23,7 +24,7 @@ jobs:
         run: |
           mkdir -p solutions
           export DAY=$(date +%Y-%m-%d)  # Export variable to use in other steps
-          FILE="solutions/solution_$DAY.py"
+          FILE="solutions/solution_$DAY.cpp"
           MDFILE="problems.md"
 
           response=$(curl -s "https://codeforces.com/api/problemset.problems")
@@ -56,6 +57,6 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
-          git add solutions/solution_$(date +%Y-%m-%d).py problems.md
+          git add solutions/solution_$(date +%Y-%m-%d).cpp problems.md
           git commit -m "Added Codeforces problem & solution for $(date +%Y-%m-%d)" || echo "No changes to commit"
           git push origin main || echo "Nothing to push"
