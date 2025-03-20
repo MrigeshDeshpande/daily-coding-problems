@@ -1,9 +1,9 @@
-  name: Daily Coding Problem Commit
+name: Daily Codeforces Problem Commit
 
 on:
   schedule:
-    - cron: '45 4 * * *'  # Runs at 10.15 AM IST
-  workflow_dispatch:  # Allows manual triggering
+    - cron: '45 4 * * *'  # Runs at 10:15 AM IST (4:45 AM UTC)
+  workflow_dispatch:
 
 jobs:
   update-repo:
@@ -13,14 +13,46 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Fetch and Save a Problem
+      - name: Fetch Codeforces Problem and Generate Solution
         run: |
-          curl -s https://raw.githubusercontent.com/kushalcodes/DSA/main/dsa_questions.json -o problems.json
-          jq -r ".[$((RANDOM % 500))].question" problems.json >> problems.md
-          echo "" >> problems.md
+          mkdir -p solutions
+          day=$(date +%Y-%m-%d)
+          file="solutions/solution_$day.py"
+          mdfile="problems.md"
 
-          git config --global user.name "Mrigesh Deshpande"
-          git config --global user.email "mrigesdeshpande246+code@gmail.com"
-          git add problems.md
-          git commit -m "Added new coding problem - $(date)" || exit 0
+          # Fetch Codeforces problem list
+          response=$(curl -s "https://codeforces.com/api/problemset.problems")
+          
+          # Extract total number of problems
+          total=$(echo $response | jq '.result.problems | length')
+
+          # Pick a random problem
+          index=$((RANDOM % total))
+          problem=$(echo $response | jq ".result.problems[$index]")
+
+          # Extract problem details
+          name=$(echo $problem | jq -r '.name')
+          contestId=$(echo $problem | jq -r '.contestId')
+          index=$(echo $problem | jq -r '.index')
+          url="https://codeforces.com/contest/$contestId/problem/$index"
+
+          # Append problem to markdown file
+          echo "## Problem for $day" >> $mdfile
+          echo "**[$name]($url)**" >> $mdfile
+          echo "" >> $mdfile
+
+          # Generate a Python solution template
+          echo "# Solution for $day ($name)" > $file
+          echo "def solve():" >> $file
+          echo "    # TODO: Implement solution" >> $file
+          echo "    print('Hello, Codeforces!')" >> $file
+          echo "" >> $file
+          echo "if __name__ == '__main__':" >> $file
+          echo "    solve()" >> $file
+
+          # Git commit and push
+          git config --global user.name "$(git config user.name)"
+          git config --global user.email "$(git config user.email)"
+          git add $file $mdfile
+          git commit -m "Added Codeforces problem & solution for $day"
           git push
