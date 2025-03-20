@@ -16,15 +16,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install jq
+      - name: Install dependencies
         run: sudo apt-get install jq -y
 
       - name: Fetch Codeforces Problem and Generate Solution
         run: |
           mkdir -p solutions
-          day=$(date +%Y-%m-%d)
-          file="solutions/solution_$day.py"
-          mdfile="problems.md"
+          export DAY=$(date +%Y-%m-%d)  # Export variable to use in other steps
+          FILE="solutions/solution_$DAY.py"
+          MDFILE="problems.md"
 
           response=$(curl -s "https://codeforces.com/api/problemset.problems")
           total=$(echo $response | jq '.result.problems | length')
@@ -37,25 +37,25 @@ jobs:
           index=$(echo $problem | jq -r '.index')
           url="https://codeforces.com/contest/$contestId/problem/$index"
 
-          echo "## Problem for $day" >> $mdfile
-          echo "**[$name]($url)**" >> $mdfile
-          echo "" >> $mdfile
+          echo "## Problem for $DAY" >> $MDFILE
+          echo "**[$name]($url)**" >> $MDFILE
+          echo "" >> $MDFILE
 
-          echo "# Solution for $day ($name)" > $file
-          echo "def solve():" >> $file
-          echo "    # TODO: Implement solution" >> $file
-          echo "    print('Hello, Codeforces!')" >> $file
-          echo "" >> $file
-          echo "if __name__ == '__main__':" >> $file
-          echo "    solve()" >> $file
+          echo "# Solution for $DAY ($name)" > $FILE
+          echo "def solve():" >> $FILE
+          echo "    # TODO: Implement solution" >> $FILE
+          echo "    print('Hello, Codeforces!')" >> $FILE
+          echo "" >> $FILE
+          echo "if __name__ == '__main__':" >> $FILE
+          echo "    solve()" >> $FILE
 
       - name: Configure Git
         run: |
           git config --global user.name "MrigeshDeshpande"
-          git config --global user.email "mrigeshdeshpande246+code@example.com"
+          git config --global user.email "mrigeshdeshpande246+code@gmail.com"
 
       - name: Commit and Push Changes
         run: |
-          git add solutions/solution_$day.py problems.md
-          git commit -m "Added Codeforces problem & solution for $day" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/MrigeshDeshpande/daily-coding-problems.git HEAD:main
+          git add solutions/solution_$(date +%Y-%m-%d).py problems.md
+          git commit -m "Added Codeforces problem & solution for $(date +%Y-%m-%d)" || echo "No changes to commit"
+          git push origin main || echo "Nothing to push"
