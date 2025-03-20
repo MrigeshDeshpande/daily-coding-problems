@@ -51,7 +51,7 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.name "Mrigesh Deshpande"
+          git config --global user.name "MrigeshDeshpande"
           git config --global user.email "mrigeshdeshpande246+code@example.com"
 
       - name: Commit and Push Changes
