@@ -1,0 +1,26 @@
+  name: Daily Coding Problem Commit
+
+on:
+  schedule:
+    - cron: '45 4 * * *'  # Runs at 10.15 AM IST
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  update-repo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Fetch and Save a Problem
+        run: |
+          curl -s https://raw.githubusercontent.com/kushalcodes/DSA/main/dsa_questions.json -o problems.json
+          jq -r ".[$((RANDOM % 500))].question" problems.json >> problems.md
+          echo "" >> problems.md
+
+          git config --global user.name "Mrigesh Deshpande"
+          git config --global user.email "mrigesdeshpande246+code@gmail.com"
+          git add problems.md
+          git commit -m "Added new coding problem - $(date)" || exit 0
+          git push
