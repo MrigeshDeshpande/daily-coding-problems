@@ -4,3 +4,6 @@
 ## Problem for 2025-03-20
 **[Andrey's Tree](https://codeforces.com/contest/1935/problem/F)**
 
+## Problem for 2025-03-21
+**[Prairie Partition](https://codeforces.com/contest/773/problem/C)**
+
