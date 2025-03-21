@@ -7,3 +7,6 @@
 ## Problem for 2025-03-21
 **[Prairie Partition](https://codeforces.com/contest/773/problem/C)**
 
+## Problem for 2025-03-21
+**[Even-Odd Increments ](https://codeforces.com/contest/1744/problem/B)**
+
