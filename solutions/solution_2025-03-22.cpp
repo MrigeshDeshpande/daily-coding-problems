@@ -1,4 +1,4 @@
-# Solution for 2025-03-22 (Lust)
+# Solution for 2025-03-22 (Doremy's Connecting Plan)
 def solve():
     # TODO: Implement solution
     print('Hello, Codeforces!')

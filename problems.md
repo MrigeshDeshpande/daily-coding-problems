@@ -13,3 +13,6 @@
 ## Problem for 2025-03-22
 **[Lust](https://codeforces.com/contest/891/problem/E)**
 
+## Problem for 2025-03-22
+**[Doremy's Connecting Plan](https://codeforces.com/contest/1889/problem/B)**
+
