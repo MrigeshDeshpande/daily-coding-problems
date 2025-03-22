@@ -10,3 +10,6 @@
 ## Problem for 2025-03-21
 **[Even-Odd Increments ](https://codeforces.com/contest/1744/problem/B)**
 
+## Problem for 2025-03-22
+**[Lust](https://codeforces.com/contest/891/problem/E)**
+
